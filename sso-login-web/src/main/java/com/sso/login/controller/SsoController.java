@@ -10,6 +10,7 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,7 +50,8 @@ public class SsoController {
      * @param request
      * @return
      */
-    @RequestMapping("/login")
+    @RequestMapping("/login6")
+    @ResponseBody
     public String login(HttpServletResponse response,HttpServletRequest request){
         String username = request.getParameter("username");
         String password = request.getParameter("password");

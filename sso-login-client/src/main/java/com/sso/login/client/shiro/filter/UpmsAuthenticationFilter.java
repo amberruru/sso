@@ -13,6 +13,7 @@ import org.apache.http.impl.client.DecompressingHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -34,10 +35,13 @@ public class UpmsAuthenticationFilter extends AuthenticationFilter {
 
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
-        return super.isAccessAllowed(request, response, mappedValue);
+        Subject subject = SecurityUtils.getSubject();
+        return subject.isAuthenticated();
     }
 
+    @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
+        String loginUrl = "http://localhost:8888/sso-login-web/login";
         return false;
     }
 
@@ -64,7 +68,7 @@ public class UpmsAuthenticationFilter extends AuthenticationFilter {
         if (StringUtils.hasText(code)){
             try{
                 HttpClient httpClient = new DefaultHttpClient();
-                HttpPost httpPost = new HttpPost("http://localhost:8888/sso/login/code.htm");
+                HttpPost httpPost = new HttpPost("http://localhost:8888/sso-login-web/sso/login/code");
 
                 List<NameValuePair> nameValuePairList = new ArrayList<NameValuePair>();
                 nameValuePairList.add(new BasicNameValuePair("code",code));

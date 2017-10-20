@@ -11,9 +11,9 @@
     <!-- Shiro的Web过滤器 -->
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager"/>
-        <property name="loginUrl" value="${zheng.upms.sso.server.url}"/>
-        <property name="successUrl" value="${zheng.upms.successUrl}"/>
-        <property name="unauthorizedUrl" value="${zheng.upms.unauthorizedUrl}"/>
+        <property name="loginUrl" value=""/>
+        <property name="successUrl" value=""/>
+        <property name="unauthorizedUrl" value=""/>
         <property name="filters">
             <util:map>
                 <entry key="authc" value-ref="upmsAuthenticationFilter"/>
@@ -21,12 +21,12 @@
         </property>
         <property name="filterChainDefinitions">
             <value>
-                /manage/** = upmsSessionForceLogout,authc
+                /manage/** = authc
                 /manage/index = user
                 /druid/** = user
                 /swagger-ui.html = user
                 /resources/** = anon
-                /** = anon
+                /** = authc
             </value>
         </property>
     </bean>
