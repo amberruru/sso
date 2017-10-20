@@ -12,7 +12,6 @@
         <module>sso-module1</module>
         <module>sso-module2</module>
         <module>sso-common</module>
-        <module>sso-login</module>
         <module>sso-login-client</module>
         <module>sso-login-web</module>
         <module>sso-login-web</module>
