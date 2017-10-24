@@ -10,5 +10,11 @@
 </head>
 <body>
 <h1>INDEX</h1>
+
+<form action="http://localhost:8888/sso-login-web/sso/login" method="post">
+    <input name="username" type="text"/>
+    <input name="password" type="text"/>
+    <input type="submit"/>
+</form>
 </body>
 </html>

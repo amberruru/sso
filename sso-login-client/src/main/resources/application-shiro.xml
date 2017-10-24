@@ -26,7 +26,9 @@
                 /druid/** = user
                 /swagger-ui.html = user
                 /resources/** = anon
-                /** = authc
+                /sso/login = anon
+                /sso/code = anon
+                /**=anon
             </value>
         </property>
     </bean>
@@ -65,39 +67,39 @@
     </bean>
 
     <!-- 会话DAO，可重写，持久化session -->
-    <!--<bean id="sessionDAO" class="com.zheng.upms.client.shiro.session.UpmsSessionDao"/>
+    <!--<bean id="sessionDAO" class="com.zheng.upms.client.shiro.session.UpmsSessionDao"/>-->
 
-    &lt;!&ndash; 会话Cookie模板 &ndash;&gt;
-    <bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+    <!-- 会话Cookie模板 -->
+    <!--<bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
         &lt;!&ndash; 不会暴露给客户端 &ndash;&gt;
         <property name="httpOnly" value="true"/>
         &lt;!&ndash; 设置Cookie的过期时间，秒为单位，默认-1表示关闭浏览器时过期Cookie &ndash;&gt;
         <property name="maxAge" value="-1"/>
         &lt;!&ndash; Cookie名称 &ndash;&gt;
         <property name="name" value="${zheng.upms.session.id}"/>
-    </bean>
+    </bean>-->
 
-    &lt;!&ndash; 会话监听器 &ndash;&gt;
-    <bean id="sessionListener" class="com.zheng.upms.client.shiro.listener.UpmsSessionListener"/>
+    <!-- 会话监听器 -->
+    <!--<bean id="sessionListener" class="com.zheng.upms.client.shiro.listener.UpmsSessionListener"/>-->
 
-    &lt;!&ndash; session工厂 &ndash;&gt;
-    <bean id="sessionFactory" class="com.zheng.upms.client.shiro.session.UpmsSessionFactory"/>
+    <!-- session工厂 -->
+    <!--<bean id="sessionFactory" class="com.zheng.upms.client.shiro.session.UpmsSessionFactory"/>-->
 
-    &lt;!&ndash; rememberMe管理器 &ndash;&gt;
+    <!-- rememberMe管理器 -->
     <bean id="rememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">
-        &lt;!&ndash; rememberMe cookie加密的密钥 建议每个项目都不一样 默认AES算法 密钥长度（128 256 512 位）&ndash;&gt;
+        <!-- rememberMe cookie加密的密钥 建议每个项目都不一样 默认AES算法 密钥长度（128 256 512 位）-->
         <property name="cipherKey" value="#{T(org.apache.shiro.codec.Base64).decode('4AvVhmFLUs0KTA3Kprsdag==')}"/>
         <property name="cookie" ref="rememberMeCookie"/>
     </bean>
 
-    &lt;!&ndash; rememberMe缓存cookie &ndash;&gt;
+    <!-- rememberMe缓存cookie -->
     <bean id="rememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
         <constructor-arg value="rememberMe"/>
-        &lt;!&ndash; 不会暴露给客户端 &ndash;&gt;
+        <!-- 不会暴露给客户端 -->
         <property name="httpOnly" value="true"/>
-        &lt;!&ndash; 记住我cookie生效时间 &ndash;&gt;
-        <property name="maxAge" value="${zheng.upms.rememberMe.timeout}"/>
-    </bean>-->
+        <!-- 记住我cookie生效时间 -->
+        <property name="maxAge" value="2592000"/>
+    </bean>
 
     <!-- 设置SecurityUtils，相当于调用SecurityUtils.setSecurityManager(securityManager) -->
     <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">

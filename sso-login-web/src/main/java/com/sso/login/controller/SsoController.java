@@ -9,7 +9,9 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,15 +46,19 @@ public class SsoController {
         return object.toString();
     }
 
+    @RequestMapping("/loginsucc")
+    public String loginsucc(){
+        return "/loginsucc.jsp";
+    }
+
     /**
      * 登录
      * @param response
      * @param request
      * @return
      */
-    @RequestMapping("/login6")
-    @ResponseBody
-    public String login(HttpServletResponse response,HttpServletRequest request){
+    @RequestMapping(value = "/login",method = RequestMethod.POST)
+    public String login(HttpServletResponse response,HttpServletRequest request,ModelMap modelMap){
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         Subject subject = SecurityUtils.getSubject();
@@ -73,7 +79,7 @@ public class SsoController {
         // 回跳登录前地址
         String backurl = request.getParameter("backurl");
         if (StringUtils.isBlank(backurl)) {
-            return "redirect:/";
+            return "redirect:/sso/loginsucc";
         } else {
             return "redirect:"+backurl;
         }
@@ -84,7 +90,7 @@ public class SsoController {
      * @param request
      * @return
      */
-    @RequestMapping("/login")
+    @RequestMapping(value = "/login",method = RequestMethod.GET)
     public String login(HttpServletRequest request){
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
@@ -103,7 +109,7 @@ public class SsoController {
             }
             return "redirect:"+backurl;
         }else{
-            return "sso/login.jsp";
+            return "/index.jsp";
         }
     }
 }

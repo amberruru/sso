@@ -21,7 +21,7 @@ public class RedisUtil {
 	private static Logger _log = LoggerFactory.getLogger(com.sso.common.util.RedisUtil.class);
 
 	// Redis服务器IP
-	private static String IP = "127.0.0.7";
+	private static String IP = "127.0.0.1";
 
 	// Redis的端口号
 	private static int PORT = 6379;
@@ -107,6 +107,7 @@ public class RedisUtil {
 			jedis.set(key, value);
 			jedis.close();
 		} catch (Exception e) {
+			e.printStackTrace();
 			_log.error("Set key error : " + e);
 		}
 	}

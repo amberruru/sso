@@ -1,6 +1,7 @@
 package com.sso.login.client.shiro.filter;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.util.StringUtil;
 import com.sso.common.util.RedisUtil;
 import com.sso.login.client.util.RequestParameterUtil;
 import org.apache.http.HttpEntity;
@@ -23,8 +24,10 @@ import org.apache.shiro.web.util.WebUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,12 +39,21 @@ public class UpmsAuthenticationFilter extends AuthenticationFilter {
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
         Subject subject = SecurityUtils.getSubject();
-        return subject.isAuthenticated();
+        return validateClient(request,response);
     }
 
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-        String loginUrl = "http://localhost:8888/sso-login-web/login";
+        StringBuffer loginUrl = new StringBuffer("http://localhost:8888/sso-login-web/sso/login");
+        HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+        StringBuffer backUrl = httpServletRequest.getRequestURL();
+        String queryString = httpServletRequest.getQueryString();
+        if (StringUtil.isNotEmpty(queryString)){
+            backUrl.append("?").append(queryString);
+        }
+        loginUrl.append("?").append("backurl=").append(URLEncoder.encode(backUrl.toString(),"utf-8"));
+        HttpServletResponse httpServletResponse = (HttpServletResponse)response;
+        httpServletResponse.sendRedirect(loginUrl.toString());
         return false;
     }
 
@@ -49,18 +61,20 @@ public class UpmsAuthenticationFilter extends AuthenticationFilter {
         Subject subject = getSubject(request,response);
         Session session = subject.getSession();
         String currentSessionId = RedisUtil.get("sso_client_session_id"+"_"+session.getId().toString());
-        if (null != request.getParameter("code")) {
-            if (StringUtils.hasText(currentSessionId)) {//已经保存对应session，移除url中code，转发目标url
-                String backurl = RequestParameterUtil.getParameterWithOutCode(WebUtils.toHttp(request));
-                HttpServletResponse response1 = WebUtils.toHttp(response);
-                try {
-                    response1.sendRedirect(backurl);
-                } catch (Exception e) {
-                    e.printStackTrace();
+        if (StringUtils.hasText(currentSessionId)) {
+            if (null != request.getParameter("code")) {
+                if (StringUtils.hasText(currentSessionId)) {//已经保存对应session，移除url中code，转发目标url
+                    String backurl = RequestParameterUtil.getParameterWithOutCode(WebUtils.toHttp(request));
+                    HttpServletResponse response1 = WebUtils.toHttp(response);
+                    try {
+                        response1.sendRedirect(backurl);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
+            } else {
+                return true;
             }
-        } else {
-            return true;
         }
 
         //判断是否有登录中心的code
