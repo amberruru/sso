@@ -10,6 +10,6 @@
 </head>
 <body>
 <h1>getsession_success->module1</h1>
-${username}
+
 </body>
 </html>

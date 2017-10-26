@@ -60,6 +60,8 @@ public class UpmsAuthenticationFilter extends AuthenticationFilter {
     private boolean validateClient(ServletRequest request,ServletResponse response){
         Subject subject = getSubject(request,response);
         Session session = subject.getSession();
+        HttpServletRequest httpServletRequest = (HttpServletRequest)request;
+        System.out.println(httpServletRequest.getRequestURL()+"->"+session.getId().toString());
         String currentSessionId = RedisUtil.get("sso_client_session_id"+"_"+session.getId().toString());
         if (StringUtils.hasText(currentSessionId)) {
             if (null != request.getParameter("code")) {
@@ -82,7 +84,7 @@ public class UpmsAuthenticationFilter extends AuthenticationFilter {
         if (StringUtils.hasText(code)){
             try{
                 HttpClient httpClient = new DefaultHttpClient();
-                HttpPost httpPost = new HttpPost("http://localhost:8888/sso-login-web/sso/login/code");
+                HttpPost httpPost = new HttpPost("http://localhost:8888/sso-login-web/sso/code");
 
                 List<NameValuePair> nameValuePairList = new ArrayList<NameValuePair>();
                 nameValuePairList.add(new BasicNameValuePair("code",code));
@@ -94,9 +96,9 @@ public class UpmsAuthenticationFilter extends AuthenticationFilter {
                     JSONObject result = JSONObject.parseObject(EntityUtils.toString(httpEntity));
                     if (1==result.getIntValue("code") && result.getString("result").equals(code)){
                         //保存局部sessionid
-                        RedisUtil.set("sso_client_session_id"+"_"+currentSessionId,code);
+                        RedisUtil.set("sso_client_session_id"+"_"+session.getId().toString(),code);
                         //保存全局sessionids方便退出登录
-                        RedisUtil.set("sso_client_session_ids"+"_"+code,currentSessionId);
+                        RedisUtil.set("sso_client_session_ids"+"_"+code,session.getId().toString());
                         // 移除url中的token参数
                         String backUrl = RequestParameterUtil.getParameterWithOutCode(WebUtils.toHttp(request));
                         // 返回请求资源

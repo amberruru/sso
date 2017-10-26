@@ -14,6 +14,7 @@
 <form action="http://localhost:8888/sso-login-web/sso/login" method="post">
     <input name="username" type="text"/>
     <input name="password" type="text"/>
+    <input type="hidden" name="backurl" value="${param.backurl}"/>
     <input type="submit"/>
 </form>
 </body>

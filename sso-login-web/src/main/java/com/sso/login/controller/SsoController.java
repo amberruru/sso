@@ -10,10 +10,12 @@ import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.print.DocFlavor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
@@ -25,6 +27,18 @@ import java.util.UUID;
 @RequestMapping("/sso")
 public class SsoController {
 
+    @RequestMapping("/index")
+    public String index(HttpServletRequest request,HttpServletResponse response){
+        Subject subject = SecurityUtils.getSubject();
+        String username = (String)subject.getPrincipal();
+        if (!"".equals(username) && null!=username){
+            request.setAttribute("username",username);
+        }else{
+            request.setAttribute("username","null");
+        }
+        return "/index.jsp";
+    }
+
     /**
      * 认证code
      * @param request
@@ -32,6 +46,7 @@ public class SsoController {
      * @return
      */
     @RequestMapping("/code")
+    @ResponseBody
     public String code(HttpServletRequest request, HttpServletResponse response){
         JSONObject object = new JSONObject();
         String codeParam = request.getParameter("code");
@@ -102,9 +117,9 @@ public class SsoController {
                 backurl = "/";
             } else {
                 if (backurl.contains("?")) {
-                    backurl += "&upms_code=" + code + "&upms_username=" + username;
+                    backurl += "&code=" + code + "&username=" + username;
                 } else {
-                    backurl += "?upms_code=" + code + "&upms_username=" + username;
+                    backurl += "?code=" + code + "&username=" + username;
                 }
             }
             return "redirect:"+backurl;
